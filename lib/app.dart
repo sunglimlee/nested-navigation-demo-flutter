@@ -16,18 +16,18 @@ class AppState extends State<App> {
     TabItem.blue: GlobalKey<NavigatorState>(),
   };
 
-  void _selectTab(TabItem tabItem) {
+  void _selectTab(TabItem tabItem) { // calls the _selectTab method to update the state as needed.
     if (tabItem == _currentTab) {
-      // pop to first route
-      _navigatorKeys[tabItem]!.currentState!.popUntil((route) => route.isFirst);
+      // pop to first route // QnANavigation
+      _navigatorKeys[tabItem]!.currentState!.popUntil((route) => route.isFirst); // 한번 더 누르면 첫 화면으로 가라.
     } else {
-      setState(() => _currentTab = tabItem);
+      setState(() => _currentTab = tabItem); // setState 로 값을 바꾸고 _currentTab 에 해당하는 곳들을 다시 다 훝는다.
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return WillPopScope( // QnANavigation
       onWillPop: () async {
         final isFirstRouteInCurrentTab =
             !await _navigatorKeys[_currentTab]!.currentState!.maybePop();
@@ -44,7 +44,8 @@ class AppState extends State<App> {
         return isFirstRouteInCurrentTab;
       },
       child: Scaffold(
-        body: Stack(children: <Widget>[
+        body: Stack(children: <Widget>[ // 이부분에 Navigator 를 감싸준다는게 핵심
+          // setState 가 실행될 때 마다 여기 구문들이 다시 다 실행 되니깐.. 하나만 보이는 거다.
           _buildOffstageNavigator(TabItem.red),
           _buildOffstageNavigator(TabItem.green),
           _buildOffstageNavigator(TabItem.blue),
@@ -59,7 +60,7 @@ class AppState extends State<App> {
 
   Widget _buildOffstageNavigator(TabItem tabItem) {
     return Offstage(
-      offstage: _currentTab != tabItem,
+      offstage: _currentTab != tabItem, // false 이면 보인다. 새로운 탭이므로 각각의 탭은 각각의 네비게이터가 존재한다.
       child: TabNavigator(
         navigatorKey: _navigatorKeys[tabItem],
         tabItem: tabItem,
